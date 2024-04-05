@@ -1,4 +1,4 @@
-const fetchData = async () => {
+export const fetchData = async () => {
   const res = await fetch("http://localhost:3000/api/rest", {
     cache: "no-store",
   });
