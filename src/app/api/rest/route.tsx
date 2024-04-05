@@ -7,7 +7,6 @@ import { userSchema } from "@/model/usersModel";
 export async function GET() {
   try {
     await dbConnect(); // Connect to the database
-    console.log("Database is successfully connected");
 
     // Find documents using the userSchema
     const data = await userSchema.find();

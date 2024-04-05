@@ -1,10 +1,17 @@
 async function fetchData() {
-  const res = await fetch("http://localhost:3000/api/rest", {
-    cache: "no-store",
-  });
-  const response = await res.json();
-  console.log("res new", response);
-  return response;
+  try {
+    const res = await fetch("http://localhost:3000/api/rest", {
+      cache: "no-store",
+    });
+    if (!res.ok) {
+      throw new Error("Failed to fetch data");
+    }
+    const response = await res.json();
+    console.log("res new", response);
+    return response;
+  } catch (error) {
+    console.log((error as { message: string }).message);
+  }
 }
 
 export default async function Home() {
