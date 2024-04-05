@@ -1,11 +1,11 @@
-export const fetchData = async () => {
+async function fetchData() {
   const res = await fetch("http://localhost:3000/api/rest", {
     cache: "no-store",
   });
   const response = await res.json();
   console.log("res new", response);
   return response;
-};
+}
 
 export default async function Home() {
   const data = await fetchData();
