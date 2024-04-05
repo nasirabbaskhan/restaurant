@@ -1,8 +1,6 @@
 async function fetchData() {
   try {
-    const res = await fetch("http://localhost:3000/api/rest", {
-      cache: "no-store",
-    });
+    const res = await fetch("http://localhost:3000/api/rest");
     if (!res.ok) {
       throw new Error("Failed to fetch data");
     }
@@ -16,7 +14,7 @@ async function fetchData() {
 
 export default async function Home() {
   const data = await fetchData();
-  // console.log(data);
+  console.log("final data", data);
   return (
     <>
       <div>Hello</div>

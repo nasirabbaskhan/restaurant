@@ -11,7 +11,7 @@ export async function GET() {
     // Find documents using the userSchema
     const data = await userSchema.find();
     console.log("nasir aneela:", data);
-    return NextResponse.json(data);
+    return NextResponse.json({ result: data });
     // Return JSON response
   } catch (error) {
     console.log("db is not conneted");
