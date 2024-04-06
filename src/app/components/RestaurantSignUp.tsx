@@ -26,10 +26,20 @@ export default function RestaurantSignUp() {
   const router = useRouter();
   const handleSignUp = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/rest", {
-        method: "POST",
-        body: JSON.stringify({ email, password, name, city, address, contect }),
-      });
+      const response = await fetch(
+        "https://restaurant-ya6d.vercel.app/api/rest",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            email,
+            password,
+            name,
+            city,
+            address,
+            contect,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Network response was not ok");
