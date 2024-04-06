@@ -11,7 +11,7 @@ export async function GET() {
 
     // Find documents using the userSchema
     const data = await userSchema.find();
-    console.log("nasir aneela:", data);
+    // console.log("nasir aneela:", data);
     return NextResponse.json(data);
     // Return JSON response
   } catch (error) {

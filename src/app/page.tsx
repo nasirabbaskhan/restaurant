@@ -9,12 +9,12 @@ const fetchData = async () => {
     next: { revalidate: 10 },
   });
   const response = await res.json();
-  console.log("res new", response);
+  // console.log("res new", response);
   return response;
 };
 export default async function Home() {
   const data = await fetchData();
-  console.log(data);
+  // console.log(data);
   return (
     <>
       <h1>nasir</h1>
