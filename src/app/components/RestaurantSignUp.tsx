@@ -11,7 +11,7 @@ export default function RestaurantSignUp() {
 
   const handleSignUp = async () => {
     console.log(email, password, c_password, name, city, address, contect);
-    let result = await fetch("https://restaurant-ya6d.vercel.app//api/rest", {
+    let result = await fetch("https://restaurant-ya6d.vercel.app/api/rest", {
       method: "POST",
       body: JSON.stringify({ email, password, name, city, address, contect }),
     });
