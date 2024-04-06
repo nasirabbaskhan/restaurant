@@ -6,7 +6,7 @@
 // Your fetchData function implementation
 const fetchData = async () => {
   const res = await fetch("https://restaurant-ya6d.vercel.app/api/rest", {
-    cache: "no-cache",
+    cache: "no-store",
   });
   const response = await res.json();
   console.log("res new", response);
