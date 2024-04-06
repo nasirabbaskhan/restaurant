@@ -19,7 +19,7 @@ const fetchData = async () => {
 };
 export default async function Home() {
   const data: DbData[] = await fetchData();
-  console.log(data);
+  // console.log(data);
   return (
     <>
       <h1>nasir</h1>

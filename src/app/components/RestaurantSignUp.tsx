@@ -1,5 +1,20 @@
+import { useRouter } from "next/navigation";
+import { NextResponse } from "next/server";
 import React, { useState } from "react";
 
+interface Result {
+  email: string;
+  password: string;
+  name: string;
+  city: string;
+  address: string;
+  // Add other fields as needed
+}
+
+interface PostResponse {
+  result: Result;
+  success: boolean;
+}
 export default function RestaurantSignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -8,17 +23,34 @@ export default function RestaurantSignUp() {
   const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
   const [contect, setContect] = useState("");
-
+  const router = useRouter();
   const handleSignUp = async () => {
-    console.log(email, password, c_password, name, city, address, contect);
-    let result = await fetch("https://restaurant-ya6d.vercel.app/api/rest", {
-      method: "POST",
-      body: JSON.stringify({ email, password, name, city, address, contect }),
-    });
-    result = await result.json();
-    console.log(result);
-    if (result) {
-      alert("Restaurant Registration Successfully");
+    try {
+      const response = await fetch("http://localhost:3000/api/rest", {
+        method: "POST",
+        body: JSON.stringify({ email, password, name, city, address, contect }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const responseData = await response.json();
+
+      // Handle success or failure based on responseData.success
+      if (responseData.success) {
+        const { result } = responseData;
+        // console.log(result);
+        // delete the password bcz we do not want to stor on localstorage
+        delete result.password;
+        localStorage.setItem("restaurantUser", JSON.stringify(result));
+        // after signup we will direct to dashnoard
+        router.push("/restaurant/dashboard");
+        // Handle sign up failure
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      return NextResponse.json(error);
     }
   };
   return (

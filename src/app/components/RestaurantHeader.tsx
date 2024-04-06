@@ -1,7 +1,27 @@
+"use client";
 import Link from "next/link";
-import React from "react";
+import { useRouter, usePathname } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 export default function RestaurantHeader() {
+  const [details, setDetails] = useState();
+  const router = useRouter();
+  const pathName = usePathname();
+
+  useEffect(() => {
+    let data = localStorage.getItem("restaurantUser") as string;
+    if (!data && pathName == "/restaurant/dashboard") {
+      router.push("/restaurant");
+    } else if (data && pathName == "/restaurant") {
+      router.push("/restaurant/dashboard");
+    } else {
+      setDetails(JSON.parse(data));
+    }
+  }, []);
+  const handleLogOut = () => {
+    localStorage.removeItem("restaurantUser");
+    router.push("/restaurant");
+  };
   return (
     <>
       <header className="text-gray-600 body-font">
@@ -25,12 +45,20 @@ export default function RestaurantHeader() {
             <Link href={"/"} className="mr-5 hover:text-gray-900">
               Home
             </Link>
-            <Link href={"/"} className="mr-5 hover:text-gray-900">
-              SignUp/LogIn
-            </Link>
-            <Link href={"/"} className="mr-5 hover:text-gray-900">
-              Profile
-            </Link>
+            {details ? (
+              <>
+                <button onClick={handleLogOut} className="mr-5 ">
+                  LogOut
+                </button>
+                <Link href={"/"} className="mr-5 hover:text-gray-900">
+                  Profile
+                </Link>
+              </>
+            ) : (
+              <Link href={"/"} className="mr-5 hover:text-gray-900">
+                SignUp/LogIn
+              </Link>
+            )}
           </nav>
         </div>
       </header>
