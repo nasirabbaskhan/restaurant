@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 
 import dbConnect from "@/lib/db";
 import { userSchema } from "@/model/userModel";
+import { Result } from "postcss";
 
 export async function GET() {
   try {
@@ -18,4 +19,12 @@ export async function GET() {
     console.log("db is not conneted");
     console.log("SOMTHING WRONG", error);
   }
+}
+
+export async function POST(req: NextRequest) {
+  const body = await req.json();
+  await dbConnect();
+  let user = new userSchema(body);
+  const result = await user.save();
+  return NextResponse.json({ result, success: true });
 }
