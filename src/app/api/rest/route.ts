@@ -22,9 +22,25 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
   await dbConnect();
-  let user = new userSchema(body);
-  const result = await user.save();
-  return NextResponse.json({ result, success: true });
+  const body = await req.json();
+  let result;
+  let success = false;
+  if (body.logIn) {
+    result = await userSchema.findOne({
+      email: body.email,
+      password: body.password,
+    });
+    if (result) {
+      success = true;
+    }
+  } else {
+    let user = new userSchema(body);
+    result = await user.save();
+    if (result) {
+      success = true;
+    }
+  }
+
+  return NextResponse.json({ result, success });
 }
