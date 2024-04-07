@@ -2,6 +2,7 @@ import { Span } from "next/dist/trace";
 import { useRouter } from "next/navigation";
 import { NextResponse } from "next/server";
 import React, { useState } from "react";
+import * as yup from "yup";
 
 interface Result {
   email: string;
@@ -24,9 +25,19 @@ export default function RestaurantSignUp() {
   const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
   const [contect, setContect] = useState("");
-  const [error, setError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const [errors, setErrors] = useState("");
+
   const router = useRouter();
+  // for validation from yup
+  const signupValidationSchema = yup.object().shape({
+    email: yup.string().required().email(),
+    password: yup.string().required().max(10).min(4),
+    name: yup.string().required().max(12).min(4),
+    city: yup.string().required().max(12).min(4),
+    address: yup.string().required().max(12).min(4),
+    contect: yup.number().required().min(10),
+  });
   const handleSignUp = async () => {
     // validation
     if (password !== c_password) {
@@ -36,23 +47,18 @@ export default function RestaurantSignUp() {
       setPasswordError(false);
     }
 
-    if (
-      !name ||
-      !email ||
-      !password ||
-      !c_password ||
-      !city ||
-      !city ||
-      !address ||
-      !contect
-    ) {
-      setError(true);
-      return false;
-    } else {
-      setError(false);
-    }
-
     try {
+      const result = await signupValidationSchema.validate({
+        email,
+        password,
+        name,
+        city,
+        address,
+        contect,
+      });
+      if (!result) {
+        return;
+      }
       const response = await fetch(
         "https://restaurant-ya6d.vercel.app/api/rest",
         {
@@ -85,11 +91,14 @@ export default function RestaurantSignUp() {
         router.push("/restaurant/dashboard");
         // Handle sign up failure
       }
-    } catch (error) {
-      console.error("Error:", error);
-      return NextResponse.json(error);
+      setErrors("");
+    } catch (error: any) {
+      console.log(error.errors);
+
+      setErrors(error.errors);
     }
   };
+  // console.log(errors);
   return (
     <>
       <section className="text-gray-600 body-font max-w-[600px] mx-auto md:mt-6 -mt-5">
@@ -112,9 +121,7 @@ export default function RestaurantSignUp() {
               className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
             />
           </div>
-          {error && !email && (
-            <span className="text-red-600">Email field is required *</span>
-          )}
+
           <div className="relative mb-4">
             <label htmlFor="email" className="leading-7 text-sm text-gray-600">
               password
@@ -132,9 +139,6 @@ export default function RestaurantSignUp() {
               className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
             />
           </div>
-          {error && !password && !email && (
-            <span className="text-red-600">Password field is required *</span>
-          )}
 
           <div className="relative mb-4">
             <label htmlFor="email" className="leading-7 text-sm text-gray-600">
@@ -158,11 +162,6 @@ export default function RestaurantSignUp() {
               Password and Confirm Password fields are not Match
             </span>
           )}
-          {error && !c_password && (
-            <span className="text-red-600">
-              confirm password field is required *
-            </span>
-          )}
 
           <div className="relative mb-4">
             <label htmlFor="email" className="leading-7 text-sm text-gray-600">
@@ -179,11 +178,6 @@ export default function RestaurantSignUp() {
             />
           </div>
 
-          {error && !name && (
-            <span className="text-red-600">
-              Restaurant Name field is required *
-            </span>
-          )}
           <div className="relative mb-4">
             <label htmlFor="email" className="leading-7 text-sm text-gray-600">
               City
@@ -198,9 +192,7 @@ export default function RestaurantSignUp() {
               className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
             />
           </div>
-          {error && !city && (
-            <span className="text-red-600">City field is required *</span>
-          )}
+
           <div className="relative mb-4">
             <label htmlFor="email" className="leading-7 text-sm text-gray-600">
               Address
@@ -215,9 +207,7 @@ export default function RestaurantSignUp() {
               className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
             />
           </div>
-          {error && !address && (
-            <span className="text-red-600">Address field is required *</span>
-          )}
+
           <div className="relative mb-4">
             <label htmlFor="email" className="leading-7 text-sm text-gray-600">
               Contect No
@@ -232,9 +222,9 @@ export default function RestaurantSignUp() {
               className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
             />
           </div>
-          {error && !contect && (
-            <span className="text-red-600">Contect field is required *</span>
-          )}
+
+          {/* show the errors */}
+          <div className="mt-6 mb-4 text-red-700">{errors}</div>
           <button
             onClick={handleSignUp}
             className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg"

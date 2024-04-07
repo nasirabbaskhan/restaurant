@@ -1,21 +1,31 @@
 import { Span } from "next/dist/trace";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import * as yup from "yup";
 
 export default function RestaurantLogIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [err, setErr] = useState(false); // for validation
-  const [result, setResult] = useState(); // for geting response in result
+  const [isMached, setIsmatched] = useState(true);
+  const [result, setResult] = useState(""); // for geting response in result
+  const [errors, setErrors] = useState(""); // for validation
+
   const router = useRouter();
+
+  // for validation from yup
+  const signInValidationSchema = yup.object().shape({
+    email: yup.string().required().email(),
+    password: yup.string().required().max(10).min(4),
+  });
   const handleLogin = async () => {
-    if (!email || !password) {
-      setErr(true);
-      return false;
-    } else {
-      setErr(false);
-    }
     try {
+      const results = await signInValidationSchema.validate({
+        email,
+        password,
+      });
+      if (!results) {
+        return;
+      }
       const res = await fetch("https://restaurant-ya6d.vercel.app/api/rest", {
         method: "POST",
         body: JSON.stringify({ email, password, logIn: true }),
@@ -33,12 +43,17 @@ export default function RestaurantLogIn() {
         // alert("login successful");
         delete result.password;
         localStorage.setItem("restaurantUser", JSON.stringify(result));
+        setResult("");
         router.push("/restaurant/dashboard");
       } else {
-        alert("login faild");
+        setIsmatched(false);
+        // alert("login faild");
       }
-    } catch (error) {
-      console.log((error as { message: string }).message);
+      setErrors("");
+    } catch (error: any) {
+      console.log(error.errors);
+
+      setErrors(error.errors);
     }
   };
   return (
@@ -67,9 +82,6 @@ export default function RestaurantLogIn() {
                 className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
               />
             </div>
-            {err && !email && (
-              <span className="text-red-600">Email field is required *</span>
-            )}
           </div>
           <div className="relative mb-8">
             <div>
@@ -89,16 +101,14 @@ export default function RestaurantLogIn() {
                 className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
               />
             </div>
-            {err && !password && (
-              <span className="text-red-600">Password field is required *</span>
-            )}
-            {!result && (
+
+            {!isMached && (
               <span className="text-red-600">
                 Possword or Email is not match
               </span>
             )}
           </div>
-
+          <div className="mt-6 mb-4 text-red-700">{errors}</div>
           <button
             onClick={handleLogin}
             className="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg"
