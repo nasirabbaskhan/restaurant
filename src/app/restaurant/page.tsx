@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
-import RestaurantSignUp from "../components/RestaurantSignUp";
-import RestaurantLogIn from "../components/RestaurantLogIn";
-import RestaurantHeader from "../components/RestaurantHeader";
+import RestaurantSignUp from "@/components/ui/RestaurantSignUp";
+import RestaurantLogIn from "@/components/ui/RestaurantLogIn";
+import RestaurantHeader from "@/components/ui/RestaurantHeader";
 
 export default function Restaurant() {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
